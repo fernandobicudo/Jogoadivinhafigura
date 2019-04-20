@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Adivinha a figura</string>
+    <string name="tituloTextView">Toque no </string>
+    <string name="squareText">quadrado</string>
+    <string name="triangleText">triângulo</string>
+    <string name="circleText">círculo</string>
+    <string name="rectangleText">retângulo</string>
+</resources>
