@@ -10,26 +10,16 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.provider.MediaStore;
-import android.support.v4.print.PrintHelper;
-import android.util.ArraySet;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewDebug;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Random;
 
 // custom View for drawing
 public class DoodleView extends View {
@@ -55,6 +45,9 @@ public class DoodleView extends View {
     // DoodleView constructor initializes the DoodleView
     public DoodleView(Context context, AttributeSet attrs) {
         super(context, attrs); // pass context to View's constructor
+
+
+
         paintScreen = new Paint(); // used to display bitmap onto screen
 
 
@@ -72,13 +65,11 @@ public class DoodleView extends View {
         //variáveis que serão utilizadas para calcular o tamanho das figuras,
         // margens e posicionamento
         // em relação ao espaço disponível
-
-
     }
 
 
 
-    public LinkedHashSet generateRandom(){
+    public LinkedHashSet QuadrantRandom(){
 
         LinkedHashSet hashSet = new LinkedHashSet();
 
@@ -88,6 +79,30 @@ public class DoodleView extends View {
             hashSet.add(number);
         }
         return hashSet;
+    }
+
+    public String ShapeRandom(){
+
+        String shape = "";
+        int number = (int)(Math.random()*4);
+
+        switch (number) {
+
+            case 0:
+                shape = "square";
+                break;
+            case 1:
+                shape = "circle";
+                break;
+            case 2:
+                shape = "rectangle";
+                break;
+            case 3:
+                shape = "triangle";
+                break;
+
+        }
+        return shape;
     }
 
     public void Dimensions() {
@@ -148,39 +163,60 @@ public class DoodleView extends View {
 
         Dimensions();
 
+        String shape = ShapeRandom();
+
         HashSet hs = new HashSet();
 
-        hs = generateRandom();
+        HashSet circle = new HashSet();
+
+        HashSet triangule = new HashSet();
+
+        int cx=0, cy=0, radius=0;
+
+        Point vh = null;
+        Point vb1 = null;
+        Point vb2 = null;
+
+        Path path = new Path();
+
+        hs = QuadrantRandom();
 
         Iterator i = hs.iterator();
+
 
         while (i.hasNext()) {
             //Toast.makeText(getContext(), "O novo número sorteado é: " + i.next().toString(), Toast.LENGTH_LONG).show();
             canvas.drawRect(Square((int)i.next()), paintLine);
 
+            circle = Circle((int)i.next());
+            Iterator c = circle.iterator();
 
+            while(c.hasNext()) {
+                cx = (int) c.next();
+                cy = (int) c.next();
+                radius = (int) c.next();
+                canvas.drawCircle(cx, cy, radius, paintLine);
+            }
 
+            canvas.drawRect(Rectangle((int)i.next()), paintLine);
 
+            triangule = Triangule((int)i.next());
+            Iterator t = triangule.iterator();
 
+            while(t.hasNext()) {
+
+                vh = (Point) t.next();
+                vb1 = (Point) t.next();
+                vb2 = (Point) t.next();
+            }
+
+            path.moveTo(vh.x, vh.y);
+            path.lineTo(vb1.x, vb1.y);
+            path.lineTo(vb2.x, vb2.y);
+            path.lineTo(vh.x, vh.y);
+            path.close();
+            canvas.drawPath(path, paintLine);
         }
-
-
-
-
-
-
-//        canvas.drawBitmap(bitmap, 0, 0, paintScreen);
-//
-//        canvas.drawRect(0,0,1440,1940, paintLine);
-//
-//        canvas.drawRect(120, 260, 620, 760, paintLine);
-//
-//        canvas.drawRect(841, 260, 1341, 760, paintLine);
-//
-//        canvas.drawRect(120, 1231, 620, 1731, paintLine);
-//
-//        canvas.drawRect(841, 1231, 1341, 1731, paintLine);
-
     }
 
     // handle touch event
@@ -331,12 +367,123 @@ public class DoodleView extends View {
     }
 
 
+    public Rect Rectangle(int quadrant) {
+
+        Rect rectangle = new Rect();
+
+        int left= 0, top= 0, right= 0, bottom = 0, side ;
+
+        side = calculateRectangleSide();
+
+        switch (quadrant) {
+
+            case 0:
+
+                left = centerx1 - side/2;
+                top = centery1 - side/4;
+                right = left + side;
+                bottom = top + side/2;
+                break;
+
+            case 1:
+
+                left = centerx2 - side/2;
+                top = centery1 - side/4;
+                right = left + side;
+                bottom = top + side/2;
+
+                break;
+
+            case 2:
+
+                left = centerx1 - side/2;
+                top = centery2 - side/4;
+                right = left + side;
+                bottom = top + side/2;
+
+                break;
+
+            case 3:
+                left = centerx2 - side/2;
+                top = centery2 - side/4;
+                right = left + side;
+                bottom = top + side/2;
+                break;
+        }
+
+        rectangle.set(left, top, right, bottom);
+
+        return rectangle;
+
+    }
+    private int calculateRectangleSide() {
+
+        return (totalWidth/2 - totalWidth/8);
+    }
+
+
+    public LinkedHashSet Triangule(int quadrant) {
+
+        LinkedHashSet triangule = new LinkedHashSet();
+
+        Point vb1 = null;
+        Point vb2 = null;
+        Point vh = null;
+
+
+        int height;
+
+        height = calculateSquareSide();
+
+        switch (quadrant) {
+
+            case 0:
+
+                vh = new Point(centerx1, centery1-height/2);
+                vb1 = new Point(centerx1-height/4, centery1+height/2);
+                vb2 = new Point(centerx1+height/4, centery1+height/2);
+
+
+                break;
+
+            case 1:
+
+                vh = new Point(centerx2, centery1-height/2);
+                vb1 = new Point(centerx2-height/4, centery1+height/2);
+                vb2 = new Point(centerx2+height/4, centery1+height/2);
+
+                break;
+
+            case 2:
+
+                vh = new Point(centerx1, centery2-height/2);
+                vb1 = new Point(centerx1-height/4, centery2+height/2);
+                vb2 = new Point(centerx1+height/4, centery2+height/2);
+                break;
+
+            case 3:
+                vh = new Point(centerx2, centery2-height/2);
+                vb1 = new Point(centerx2-height/4, centery2+height/2);
+                vb2 = new Point(centerx2+height/4, centery2+height/2);
+                break;
+        }
+
+        triangule.add(vh);
+        triangule.add(vb1);
+        triangule.add(vb2);
+
+        return triangule;
+    }
+
+
+
+
     public LinkedHashSet Circle(int quadrant) {
 
         LinkedHashSet lh = new LinkedHashSet();
 
 
-        int cx= 0, cy= 0, radius= 0;
+        int cx= 0, cy= 0, radius;
 
         radius = calculateCircleRadius();
 
@@ -345,7 +492,6 @@ public class DoodleView extends View {
             case 0:
 
                 cx = centerx1;
-
                 cy = centery1;
 
 
