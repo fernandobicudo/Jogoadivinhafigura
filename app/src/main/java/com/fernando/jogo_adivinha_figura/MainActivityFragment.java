@@ -33,7 +33,7 @@ public class MainActivityFragment extends Fragment {
       View view =
          inflater.inflate(R.layout.fragment_main, container, false);
 
-      setHasOptionsMenu(true); // this fragment has menu items to display
+      //setHasOptionsMenu(true); // this fragment has menu items to display
 
       // get reference to the DoodleView
       doodleView = (DoodleView) view.findViewById(R.id.doodleView);

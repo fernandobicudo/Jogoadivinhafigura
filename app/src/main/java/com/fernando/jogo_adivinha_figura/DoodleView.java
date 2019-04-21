@@ -9,16 +9,27 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.provider.MediaStore;
 import android.support.v4.print.PrintHelper;
+import android.util.ArraySet;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewDebug;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Random;
 
 // custom View for drawing
 public class DoodleView extends View {
@@ -29,24 +40,67 @@ public class DoodleView extends View {
     private Canvas bitmapCanvas; // used to to draw on the bitmap
     private final Paint paintScreen; // used to draw bitmap onto screen
     private final Paint paintLine; // used to draw lines onto bitmap
+    private final Paint paintText;
 
     // Maps of current Paths being drawn and Points in those Paths
     private final Map<Integer, Path> pathMap = new HashMap<>();
     private final Map<Integer, Point> previousPointMap =  new HashMap<>();
+
+    private int totalHeight;
+    private int totalWidth;
+    private int marginX, marginY;
+    private int quadrant;
+    private int centerx1, centerx2, centery1, centery2;
 
     // DoodleView constructor initializes the DoodleView
     public DoodleView(Context context, AttributeSet attrs) {
         super(context, attrs); // pass context to View's constructor
         paintScreen = new Paint(); // used to display bitmap onto screen
 
+
         // set the initial display settings for the painted line
         paintLine = new Paint();
         paintLine.setAntiAlias(true); // smooth edges of drawn line
         paintLine.setColor(Color.BLACK); // default color is black
         paintLine.setStyle(Paint.Style.STROKE); // solid line
-        paintLine.setStrokeWidth(5); // set the default line width
+        paintLine.setStrokeWidth(30); // set the default line width
         paintLine.setStrokeCap(Paint.Cap.ROUND); // rounded line ends
+
+        paintText = new Paint();
+        paintText.setColor(Color.BLACK);
+
+        //variáveis que serão utilizadas para calcular o tamanho das figuras,
+        // margens e posicionamento
+        // em relação ao espaço disponível
+
+
     }
+
+
+
+    public LinkedHashSet generateRandom(){
+
+        LinkedHashSet hashSet = new LinkedHashSet();
+
+        while (hashSet.size() < 4) {
+
+            int number = (int)(Math.random()*4);
+            hashSet.add(number);
+        }
+        return hashSet;
+    }
+
+    public void Dimensions() {
+
+
+        totalHeight = getHeight();
+        totalWidth = getWidth();
+        centerx1 = totalWidth/4;
+        centerx2 = (totalWidth/4)*3;
+        centery1 = totalHeight/3;
+        centery2 = (totalHeight/3)*2;
+    }
+
 
     // creates Bitmap and Canvas based on View's size
     @Override
@@ -55,6 +109,8 @@ public class DoodleView extends View {
                 Bitmap.Config.ARGB_8888);
         bitmapCanvas = new Canvas(bitmap);
         bitmap.eraseColor(Color.WHITE); // erase the Bitmap with white
+
+
     }
 
     // clear the painting
@@ -89,11 +145,42 @@ public class DoodleView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         // draw the background screen
-        canvas.drawBitmap(bitmap, 0, 0, paintScreen);
 
-        // for each path currently being drawn
-        for (Integer key : pathMap.keySet())
-            canvas.drawPath(pathMap.get(key), paintLine); // draw line
+        Dimensions();
+
+        HashSet hs = new HashSet();
+
+        hs = generateRandom();
+
+        Iterator i = hs.iterator();
+
+        while (i.hasNext()) {
+            //Toast.makeText(getContext(), "O novo número sorteado é: " + i.next().toString(), Toast.LENGTH_LONG).show();
+            canvas.drawRect(Square((int)i.next()), paintLine);
+
+
+
+
+
+        }
+
+
+
+
+
+
+//        canvas.drawBitmap(bitmap, 0, 0, paintScreen);
+//
+//        canvas.drawRect(0,0,1440,1940, paintLine);
+//
+//        canvas.drawRect(120, 260, 620, 760, paintLine);
+//
+//        canvas.drawRect(841, 260, 1341, 760, paintLine);
+//
+//        canvas.drawRect(120, 1231, 620, 1731, paintLine);
+//
+//        canvas.drawRect(841, 1231, 1341, 1731, paintLine);
+
     }
 
     // handle touch event
@@ -187,4 +274,156 @@ public class DoodleView extends View {
         bitmapCanvas.drawPath(path, paintLine); // draw to bitmapCanvas
         path.reset(); // reset the Path
     }
+
+
+    public Rect Square(int quadrant) {
+
+        Rect square = new Rect();
+
+        int left= 0, top= 0, right= 0, bottom = 0, side ;
+
+        side = calculateSquareSide();
+
+        switch (quadrant) {
+
+            case 0:
+
+                left = centerx1 - side/2;
+                top = centery1 - side/2;
+                right = left + side;
+                bottom = top + side;
+                break;
+
+            case 1:
+
+                left = centerx2 - side/2;
+                top = centery1 - side/2;
+                right = left + side;
+                bottom = top + side;
+
+                break;
+
+            case 2:
+
+                left = centerx1 - side/2;
+                top = centery2 - side/2;
+                right = left + side;
+                bottom = top + side;
+
+                break;
+
+            case 3:
+                left = centerx2 - side/2;
+                top = centery2 - side/2;
+                right = left + side;
+                bottom = top + side;
+                break;
+        }
+
+        square.set(left, top, right, bottom);
+
+        return square;
+
+    }
+    private int calculateSquareSide() {
+
+        return (totalWidth/2 - totalWidth/8);
+    }
+
+
+    public LinkedHashSet Circle(int quadrant) {
+
+        LinkedHashSet lh = new LinkedHashSet();
+
+
+        int cx= 0, cy= 0, radius= 0;
+
+        radius = calculateCircleRadius();
+
+        switch (quadrant) {
+
+            case 0:
+
+                cx = centerx1;
+
+                cy = centery1;
+
+
+                break;
+
+            case 1:
+
+                cx = centerx2;
+                cy = centery1;
+
+                break;
+
+            case 2:
+
+                cx = centerx1;
+                cy = centery2;
+
+                break;
+
+            case 3:
+                cx = centerx2;
+                cy = centery2;
+                break;
+        }
+
+        lh.add(cx);
+        lh.add(cy);
+        lh.add(radius);
+
+        return lh;
+
+
+    }
+
+    public int calculateCircleRadius() {
+        return (totalWidth/2 - totalWidth/8)/2;
+    }
+
 }
+//    public class Shape extends Canvas {
+//
+//        private int quadrant;
+//
+//
+//        public Shape(int quadrant) {
+//            this.quadrant = quadrant;
+//
+//        }
+//    }
+//
+//    public class ShapeSquare extends Shape {
+//
+//        private int side;
+//
+//                public ShapeSquare(int quadrant) {
+//            super(quadrant);
+//
+//            side = calculateSide();
+//
+//        }
+//
+//
+//
+//        private int calculateSide() {
+//
+////            return (totalWidth/2 - totalWidth/12);
+////        }
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//    }
+
+
+
+
