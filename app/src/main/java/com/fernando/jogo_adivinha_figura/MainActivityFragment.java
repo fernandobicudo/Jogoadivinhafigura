@@ -3,6 +3,7 @@
 package com.fernando.jogo_adivinha_figura;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,17 +21,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class MainActivityFragment extends Fragment {
    private DoodleView doodleView; // handles touch events and draws
    private boolean dialogOnScreen = false;
-
 
    // called when Fragment's view needs to be created
    @Override
    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                             Bundle savedInstanceState) {
       super.onCreateView(inflater, container, savedInstanceState);
+
       View view =
          inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -40,7 +43,6 @@ public class MainActivityFragment extends Fragment {
 
       return view;
    }
-
 
 
    // returns the DoodleView

@@ -1,9 +1,11 @@
 <com.fernando.jogo_adivinha_figura.DoodleView
-   xmlns:android="http://schemas.android.com/apk/res/android"
-   xmlns:tools="http://schemas.android.com/tools"
-   android:id="@+id/doodleView"
-   android:layout_width="match_parent"
-   android:layout_height="match_parent"
-   tools:context=".MainActivityFragment"
-   tools:showIn="@layout/activity_main">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/doodleView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivityFragment"
+    tools:showIn="@layout/activity_main">
 </com.fernando.jogo_adivinha_figura.DoodleView>
+
+

@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,11 +43,18 @@ public class DoodleView extends View {
     private int quadrant;
     private int centerx1, centerx2, centery1, centery2;
 
+    TextView tituloTextView;
+
+    Region squareR  = null;
+    Region circleR  = null;
+    Region triangleR  = null;
+    Region rectangleR  = null;
+
+
+
     // DoodleView constructor initializes the DoodleView
     public DoodleView(Context context, AttributeSet attrs) {
         super(context, attrs); // pass context to View's constructor
-
-
 
         paintScreen = new Paint(); // used to display bitmap onto screen
 
@@ -103,6 +111,7 @@ public class DoodleView extends View {
 
         }
         return shape;
+
     }
 
     public void Dimensions() {
@@ -165,28 +174,28 @@ public class DoodleView extends View {
 
         String shape = ShapeRandom();
 
-        HashSet hs = new HashSet();
-
+        HashSet quadrantSet = new HashSet();
         HashSet circle = new HashSet();
-
         HashSet triangule = new HashSet();
 
+        //circle coordinates
         int cx=0, cy=0, radius=0;
 
+        //triangle coordinates
         Point vh = null;
         Point vb1 = null;
         Point vb2 = null;
-
         Path path = new Path();
 
-        hs = QuadrantRandom();
-
-        Iterator i = hs.iterator();
-
+        //Quadrants list in random order
+        quadrantSet = QuadrantRandom();
+        Iterator i = quadrantSet.iterator();
 
         while (i.hasNext()) {
-            //Toast.makeText(getContext(), "O novo número sorteado é: " + i.next().toString(), Toast.LENGTH_LONG).show();
+
             canvas.drawRect(Square((int)i.next()), paintLine);
+
+
 
             circle = Circle((int)i.next());
             Iterator c = circle.iterator();
@@ -316,7 +325,9 @@ public class DoodleView extends View {
 
         Rect square = new Rect();
 
-        int left= 0, top= 0, right= 0, bottom = 0, side ;
+        int left= 0, top= 0, right= 0, bottom = 0, side;
+
+
 
         side = calculateSquareSide();
 
@@ -357,6 +368,9 @@ public class DoodleView extends View {
         }
 
         square.set(left, top, right, bottom);
+        squareR = null;
+        squareR = new Region();
+        squareR.set(left, top, right, bottom);
 
         return square;
 
