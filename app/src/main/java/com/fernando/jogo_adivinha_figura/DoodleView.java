@@ -14,7 +14,10 @@ import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Switch;
+import android.widget.TextClock;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,14 +46,10 @@ public class DoodleView extends View {
     private int quadrant;
     private int centerx1, centerx2, centery1, centery2;
 
-    TextView tituloTextView;
-
     Region squareR  = null;
     Region circleR  = null;
     Region triangleR  = null;
     Region rectangleR  = null;
-
-
 
     // DoodleView constructor initializes the DoodleView
     public DoodleView(Context context, AttributeSet attrs) {
@@ -134,7 +133,6 @@ public class DoodleView extends View {
         bitmapCanvas = new Canvas(bitmap);
         bitmap.eraseColor(Color.WHITE); // erase the Bitmap with white
 
-
     }
 
     // clear the painting
@@ -191,6 +189,8 @@ public class DoodleView extends View {
         quadrantSet = QuadrantRandom();
         Iterator i = quadrantSet.iterator();
 
+
+
         while (i.hasNext()) {
 
             canvas.drawRect(Square((int)i.next()), paintLine);
@@ -228,6 +228,8 @@ public class DoodleView extends View {
         }
     }
 
+
+
     // handle touch event
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -254,70 +256,32 @@ public class DoodleView extends View {
 
     // called when the user touches the screen
     private void touchStarted(float x, float y, int lineID) {
-        Path path; // used to store the path for the given touch id
-        Point point; // used to store the last point in path
 
-        // if there is already a path for lineID
-        if (pathMap.containsKey(lineID)) {
-            path = pathMap.get(lineID); // get the Path
-            path.reset(); // resets the Path because a new touch has started
-            point = previousPointMap.get(lineID); // get Path's last point
-        }
-        else {
-            path = new Path();
-            pathMap.put(lineID, path); // add the Path to Map
-            point = new Point(); // create a new Point
-            previousPointMap.put(lineID, point); // add the Point to the Map
-        }
+        Point point = new Point();
 
-        // move to the coordinates of the touch
-        path.moveTo(x, y);
-        point.x = (int) x;
-        point.y = (int) y;
+        point.set((int)x, (int)y);
+
+
+
+        if (squareR.contains((int)x, (int)y))
+            Toast.makeText(getContext(), "Tocou no quadrado", Toast.LENGTH_SHORT).show();
+
+        else if (rectangleR.contains((int)x, (int)y))
+            Toast.makeText(getContext(), "Tocou no retângulo", Toast.LENGTH_SHORT).show();
+        else if (triangleR.contains((int)x, (int)y))
+            Toast.makeText(getContext(), "Tocou no triângulo", Toast.LENGTH_SHORT).show();
+        else if (circleR.contains((int)x, (int)y))
+            Toast.makeText(getContext(), "Tocou no círculo", Toast.LENGTH_SHORT).show();
     }
 
     // called when the user drags along the screen
     private void touchMoved(MotionEvent event) {
-        // for each of the pointers in the given MotionEvent
-        for (int i = 0; i < event.getPointerCount(); i++) {
-            // get the pointer ID and pointer index
-            int pointerID = event.getPointerId(i);
-            int pointerIndex = event.findPointerIndex(pointerID);
 
-            // if there is a path associated with the pointer
-            if (pathMap.containsKey(pointerID)) {
-                // get the new coordinates for the pointer
-                float newX = event.getX(pointerIndex);
-                float newY = event.getY(pointerIndex);
-
-                // get the path and previous point associated with
-                // this pointer
-                Path path = pathMap.get(pointerID);
-                Point point = previousPointMap.get(pointerID);
-
-                // calculate how far the user moved from the last update
-                float deltaX = Math.abs(newX - point.x);
-                float deltaY = Math.abs(newY - point.y);
-
-                // if the distance is significant enough to matter
-                if (deltaX >= TOUCH_TOLERANCE || deltaY >= TOUCH_TOLERANCE) {
-                    // move the path to the new location
-                    path.quadTo(point.x, point.y, (newX + point.x) / 2,
-                            (newY + point.y) / 2);
-
-                    // store the new coordinates
-                    point.x = (int) newX;
-                    point.y = (int) newY;
-                }
-            }
-        }
     }
 
     // called when the user finishes a touch
     private void touchEnded(int lineID) {
-        Path path = pathMap.get(lineID); // get the corresponding Path
-        bitmapCanvas.drawPath(path, paintLine); // draw to bitmapCanvas
-        path.reset(); // reset the Path
+
     }
 
 
@@ -368,9 +332,7 @@ public class DoodleView extends View {
         }
 
         square.set(left, top, right, bottom);
-        squareR = null;
-        squareR = new Region();
-        squareR.set(left, top, right, bottom);
+        squareR = new Region(left, top, right, bottom);
 
         return square;
 
@@ -426,6 +388,7 @@ public class DoodleView extends View {
         }
 
         rectangle.set(left, top, right, bottom);
+        rectangleR = new Region(left, top, right, bottom);
 
         return rectangle;
 
@@ -443,6 +406,7 @@ public class DoodleView extends View {
         Point vb1 = null;
         Point vb2 = null;
         Point vh = null;
+        Point extra1 = null;
 
 
         int height;
@@ -456,8 +420,7 @@ public class DoodleView extends View {
                 vh = new Point(centerx1, centery1-height/2);
                 vb1 = new Point(centerx1-height/4, centery1+height/2);
                 vb2 = new Point(centerx1+height/4, centery1+height/2);
-
-
+                extra1 =new Point(centerx1-height/4, centery1-height/2);
                 break;
 
             case 1:
@@ -465,7 +428,7 @@ public class DoodleView extends View {
                 vh = new Point(centerx2, centery1-height/2);
                 vb1 = new Point(centerx2-height/4, centery1+height/2);
                 vb2 = new Point(centerx2+height/4, centery1+height/2);
-
+                extra1 = new Point(centerx2-height/4, centery1-height/2);
                 break;
 
             case 2:
@@ -473,12 +436,14 @@ public class DoodleView extends View {
                 vh = new Point(centerx1, centery2-height/2);
                 vb1 = new Point(centerx1-height/4, centery2+height/2);
                 vb2 = new Point(centerx1+height/4, centery2+height/2);
+                extra1 =new Point(centerx1-height/4, centery2-height/2);
                 break;
 
             case 3:
                 vh = new Point(centerx2, centery2-height/2);
                 vb1 = new Point(centerx2-height/4, centery2+height/2);
                 vb2 = new Point(centerx2+height/4, centery2+height/2);
+                extra1 =new Point(centerx2-height/4, centery2-height/2);
                 break;
         }
 
@@ -486,11 +451,10 @@ public class DoodleView extends View {
         triangule.add(vb1);
         triangule.add(vb2);
 
+        triangleR = new Region(extra1.x, extra1.y, extra1.x+height/2, extra1.y+height);
+
         return triangule;
     }
-
-
-
 
     public LinkedHashSet Circle(int quadrant) {
 
@@ -507,22 +471,18 @@ public class DoodleView extends View {
 
                 cx = centerx1;
                 cy = centery1;
-
-
                 break;
 
             case 1:
 
                 cx = centerx2;
                 cy = centery1;
-
                 break;
 
             case 2:
 
                 cx = centerx1;
                 cy = centery2;
-
                 break;
 
             case 3:
@@ -534,6 +494,8 @@ public class DoodleView extends View {
         lh.add(cx);
         lh.add(cy);
         lh.add(radius);
+
+        circleR = new Region(cx-radius, cy-radius, cx+radius*2, cy+radius*2);
 
         return lh;
 

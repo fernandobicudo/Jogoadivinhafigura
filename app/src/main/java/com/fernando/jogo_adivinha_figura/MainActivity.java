@@ -14,12 +14,14 @@ TextView tituloTextView;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tituloTextView = findViewById(R.id.tituloTextView);
 
-        tituloTextView.setText(tituloTextView.getText() + ": " + ShapeRandom());
+
+
 
 
     }
+
+
 
     public String ShapeRandom(){
 
