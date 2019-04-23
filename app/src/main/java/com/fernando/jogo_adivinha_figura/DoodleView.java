@@ -14,18 +14,12 @@ import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Switch;
-import android.widget.TextClock;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.Map;
 
-// custom View for drawing
+
 public class DoodleView extends View {
     // used to determine whether user moved a finger enough to draw again
     private static final float TOUCH_TOLERANCE = 10;
@@ -36,22 +30,17 @@ public class DoodleView extends View {
     private final Paint paintLine; // used to draw lines onto bitmap
     private final Paint paintText;
 
-    // Maps of current Paths being drawn and Points in those Paths
-    private final Map<Integer, Path> pathMap = new HashMap<>();
-    private final Map<Integer, Point> previousPointMap =  new HashMap<>();
 
     private int totalHeight;
     private int totalWidth;
-    private int marginX, marginY;
-    private int quadrant;
-    private int centerx1, centerx2, centery1, centery2;
+    private int centerx1, centerx2, centery1, centery2; //pontos centrais dos quadrantes
 
     Region squareR  = null;
     Region circleR  = null;
     Region triangleR  = null;
     Region rectangleR  = null;
 
-    // DoodleView constructor initializes the DoodleView
+
     public DoodleView(Context context, AttributeSet attrs) {
         super(context, attrs); // pass context to View's constructor
 
@@ -68,13 +57,7 @@ public class DoodleView extends View {
 
         paintText = new Paint();
         paintText.setColor(Color.BLACK);
-
-        //variáveis que serão utilizadas para calcular o tamanho das figuras,
-        // margens e posicionamento
-        // em relação ao espaço disponível
     }
-
-
 
     public LinkedHashSet QuadrantRandom(){
 
@@ -107,15 +90,11 @@ public class DoodleView extends View {
             case 3:
                 shape = "triangle";
                 break;
-
         }
         return shape;
-
     }
 
     public void Dimensions() {
-
-
         totalHeight = getHeight();
         totalWidth = getWidth();
         centerx1 = totalWidth/4;
@@ -132,15 +111,6 @@ public class DoodleView extends View {
                 Bitmap.Config.ARGB_8888);
         bitmapCanvas = new Canvas(bitmap);
         bitmap.eraseColor(Color.WHITE); // erase the Bitmap with white
-
-    }
-
-    // clear the painting
-    public void clear() {
-        pathMap.clear(); // remove all paths
-        previousPointMap.clear(); // remove all previous points
-        bitmap.eraseColor(Color.WHITE); // clear the bitmap
-        invalidate(); // refresh the screen
     }
 
     // set the painted line's color
@@ -172,9 +142,9 @@ public class DoodleView extends View {
 
         String shape = ShapeRandom();
 
-        HashSet quadrantSet = new HashSet();
-        HashSet circle = new HashSet();
-        HashSet triangule = new HashSet();
+        HashSet quadrantSet;
+        HashSet circle;
+        HashSet triangule;
 
         //circle coordinates
         int cx=0, cy=0, radius=0;
@@ -189,14 +159,9 @@ public class DoodleView extends View {
         quadrantSet = QuadrantRandom();
         Iterator i = quadrantSet.iterator();
 
-
-
         while (i.hasNext()) {
 
             canvas.drawRect(Square((int)i.next()), paintLine);
-
-
-
             circle = Circle((int)i.next());
             Iterator c = circle.iterator();
 
@@ -227,8 +192,6 @@ public class DoodleView extends View {
             canvas.drawPath(path, paintLine);
         }
     }
-
-
 
     // handle touch event
     @Override
@@ -261,8 +224,6 @@ public class DoodleView extends View {
 
         point.set((int)x, (int)y);
 
-
-
         if (squareR.contains((int)x, (int)y))
             Toast.makeText(getContext(), "Tocou no quadrado", Toast.LENGTH_SHORT).show();
 
@@ -290,8 +251,6 @@ public class DoodleView extends View {
         Rect square = new Rect();
 
         int left= 0, top= 0, right= 0, bottom = 0, side;
-
-
 
         side = calculateSquareSide();
 
@@ -341,7 +300,6 @@ public class DoodleView extends View {
 
         return (totalWidth/2 - totalWidth/8);
     }
-
 
     public Rect Rectangle(int quadrant) {
 
@@ -407,7 +365,6 @@ public class DoodleView extends View {
         Point vb2 = null;
         Point vh = null;
         Point extra1 = null;
-
 
         int height;
 
