@@ -1,11 +1,32 @@
-<com.fernando.jogo_adivinha_figura.DoodleView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/doodleView"
+    tools:context=".MainActivityFragment"
+    tools:showIn="@layout/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivityFragment"
-    tools:showIn="@layout/activity_main">
-</com.fernando.jogo_adivinha_figura.DoodleView>
+    android:orientation="vertical">
+
+    <TextView
+
+        android:id="@+id/tituloTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        />
+
+    <com.fernando.jogo_adivinha_figura.DoodleView
+        android:id="@+id/doodleView"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        >
+    </com.fernando.jogo_adivinha_figura.DoodleView>
+
+
+</LinearLayout>
+
 
 

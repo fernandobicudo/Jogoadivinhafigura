@@ -2,6 +2,7 @@ package com.fernando.jogo_adivinha_figura;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.zip.Inflater;
@@ -13,38 +14,6 @@ TextView tituloTextView;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
-
-
-    }
-
-
-
-    public String ShapeRandom(){
-
-        String shape = "";
-        int number = (int)(Math.random()*4);
-
-        switch (number) {
-
-            case 0:
-                shape = "square";
-                break;
-            case 1:
-                shape = "circle";
-                break;
-            case 2:
-                shape = "rectangle";
-                break;
-            case 3:
-                shape = "triangle";
-                break;
-
-        }
-        return shape;
 
     }
 }

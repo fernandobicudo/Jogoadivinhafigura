@@ -7,10 +7,6 @@
     tools:context=".MainActivity"
     android:orientation="vertical"
     >
-
-
-
-
         <include
             android:id="@+id/doodleFragment1"
             layout="@layout/fragment_main"

@@ -15,6 +15,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -24,11 +25,13 @@ public class DoodleView extends View {
     // used to determine whether user moved a finger enough to draw again
     private static final float TOUCH_TOLERANCE = 10;
 
+    public String shape;
+
     private Bitmap bitmap; // drawing area for displaying or saving
     private Canvas bitmapCanvas; // used to to draw on the bitmap
-    private final Paint paintScreen; // used to draw bitmap onto screen
+    //private final Paint paintScreen; // used to draw bitmap onto screen
     private final Paint paintLine; // used to draw lines onto bitmap
-    private final Paint paintText;
+
 
 
     private int totalHeight;
@@ -40,11 +43,14 @@ public class DoodleView extends View {
     Region triangleR  = null;
     Region rectangleR  = null;
 
+    int pontos = 0;
+    int count=0;
+
 
     public DoodleView(Context context, AttributeSet attrs) {
         super(context, attrs); // pass context to View's constructor
 
-        paintScreen = new Paint(); // used to display bitmap onto screen
+        //paintScreen = new Paint(); // used to display bitmap onto screen
 
 
         // set the initial display settings for the painted line
@@ -54,9 +60,6 @@ public class DoodleView extends View {
         paintLine.setStyle(Paint.Style.STROKE); // solid line
         paintLine.setStrokeWidth(30); // set the default line width
         paintLine.setStrokeCap(Paint.Cap.ROUND); // rounded line ends
-
-        paintText = new Paint();
-        paintText.setColor(Color.BLACK);
     }
 
     public LinkedHashSet QuadrantRandom(){
@@ -104,13 +107,19 @@ public class DoodleView extends View {
     }
 
 
+    @Override
+    protected void onAnimationStart() {
+        super.onAnimationStart();
+        ShapeRandom();
+    }
+
     // creates Bitmap and Canvas based on View's size
     @Override
     public void onSizeChanged(int w, int h, int oldW, int oldH) {
-        bitmap = Bitmap.createBitmap(getWidth(), getHeight(),
-                Bitmap.Config.ARGB_8888);
-        bitmapCanvas = new Canvas(bitmap);
-        bitmap.eraseColor(Color.WHITE); // erase the Bitmap with white
+//        bitmap = Bitmap.createBitmap(getWidth(), getHeight(),
+//                Bitmap.Config.ARGB_8888);
+//        bitmapCanvas = new Canvas(bitmap);
+//        bitmap.eraseColor(Color.WHITE); // erase the Bitmap with white
     }
 
     // set the painted line's color
@@ -140,11 +149,25 @@ public class DoodleView extends View {
 
         Dimensions();
 
-        String shape = ShapeRandom();
+
+
+        if (count == 0)         {
+            shape = ShapeRandom();
+            Toast.makeText(getContext(), "Shape: " + shape + ".   " + pontos + " points.  " + count + " times.", Toast.LENGTH_SHORT).show();
+            count++;
+            Toast.makeText(getContext(),"Stating " + count + " time.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Click on the " + shape, Toast.LENGTH_SHORT).show();
+        }
+        else if (count%4 !=0)
+        {
+            count++;
+            Toast.makeText(getContext(), "Try " + count + " time.", Toast.LENGTH_SHORT).show();
+        }
+
 
         HashSet quadrantSet;
         HashSet circle;
-        HashSet triangule;
+        HashSet triangle;
 
         //circle coordinates
         int cx=0, cy=0, radius=0;
@@ -174,8 +197,8 @@ public class DoodleView extends View {
 
             canvas.drawRect(Rectangle((int)i.next()), paintLine);
 
-            triangule = Triangule((int)i.next());
-            Iterator t = triangule.iterator();
+            triangle = Triangule((int)i.next());
+            Iterator t = triangle.iterator();
 
             while(t.hasNext()) {
 
@@ -200,20 +223,20 @@ public class DoodleView extends View {
         int actionIndex = event.getActionIndex(); // pointer (i.e., finger)
 
         // determine whether touch started, ended or is moving
-        if (action == MotionEvent.ACTION_DOWN ||
-                action == MotionEvent.ACTION_POINTER_DOWN) {
+        if (action == MotionEvent.ACTION_DOWN) {
             touchStarted(event.getX(actionIndex), event.getY(actionIndex),
                     event.getPointerId(actionIndex));
         }
-        else if (action == MotionEvent.ACTION_UP ||
-                action == MotionEvent.ACTION_POINTER_UP) {
-            touchEnded(event.getPointerId(actionIndex));
-        }
-        else {
-            touchMoved(event);
-        }
+//        else if (action == MotionEvent.ACTION_UP ||
+//                action == MotionEvent.ACTION_POINTER_UP) {
+//            touchEnded(event.getPointerId(actionIndex));
+//        }
+//        else {
+//            touchMoved(event);
+//        }
 
-        invalidate(); // redraw
+        // redraw
+
         return true;
     }
 
@@ -225,14 +248,60 @@ public class DoodleView extends View {
         point.set((int)x, (int)y);
 
         if (squareR.contains((int)x, (int)y))
-            Toast.makeText(getContext(), "Tocou no quadrado", Toast.LENGTH_SHORT).show();
+        {
+            Toast.makeText(getContext(), "You touched the square", Toast.LENGTH_SHORT).show();
+            if (shape.equals("square"))
+            {
+                pontos++;
+                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            }
+        }
 
         else if (rectangleR.contains((int)x, (int)y))
-            Toast.makeText(getContext(), "Tocou no retângulo", Toast.LENGTH_SHORT).show();
+
+        {
+            Toast.makeText(getContext(), "You touched the rectangle", Toast.LENGTH_SHORT).show();
+            if (shape.equals("rectangle"))
+            {
+                pontos++;
+                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
         else if (triangleR.contains((int)x, (int)y))
-            Toast.makeText(getContext(), "Tocou no triângulo", Toast.LENGTH_SHORT).show();
+
+        {
+            Toast.makeText(getContext(), "You touched the triangle", Toast.LENGTH_SHORT).show();
+            if (shape.equals("triangle"))
+            {
+                pontos++;
+                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+
         else if (circleR.contains((int)x, (int)y))
-            Toast.makeText(getContext(), "Tocou no círculo", Toast.LENGTH_SHORT).show();
+        {
+            Toast.makeText(getContext(), "You touched the circle", Toast.LENGTH_SHORT).show();
+            if (shape.equals("circle"))
+            {
+                pontos++;
+                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if (count%4==0)
+        {
+            Toast.makeText(getContext(), "END OF GAME: YOU WON " + pontos + " POINTS. RESTART PLAYING...", Toast.LENGTH_LONG).show();
+            count = 0;
+            pontos = 0;
+        }
+
+        invalidate();
+
+
     }
 
     // called when the user drags along the screen
@@ -243,7 +312,10 @@ public class DoodleView extends View {
     // called when the user finishes a touch
     private void touchEnded(int lineID) {
 
+
+
     }
+
 
 
     public Rect Square(int quadrant) {

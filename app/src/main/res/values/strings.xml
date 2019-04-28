@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Guess the shape</string>
-    <string name="tituloTextView">Touch in </string>
+    <string name="tituloTextView">Click in the </string>
 </resources>
