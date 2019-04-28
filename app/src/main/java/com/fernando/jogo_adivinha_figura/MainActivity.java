@@ -8,7 +8,7 @@ import android.widget.TextView;
 import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
-TextView tituloTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,9 +1,7 @@
 // DoodleView.java
 // Main View for the Doodlz app.
 package com.fernando.jogo_adivinha_figura;
-
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,51 +13,37 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-
 public class DoodleView extends View {
-    // used to determine whether user moved a finger enough to draw again
+
     private static final float TOUCH_TOLERANCE = 10;
 
-    public String shape;
-
-    private Bitmap bitmap; // drawing area for displaying or saving
-    private Canvas bitmapCanvas; // used to to draw on the bitmap
-    //private final Paint paintScreen; // used to draw bitmap onto screen
-    private final Paint paintLine; // used to draw lines onto bitmap
-
-
-
+    private String shape;
+    private final Paint paintLine;
     private int totalHeight;
     private int totalWidth;
-    private int centerx1, centerx2, centery1, centery2; //pontos centrais dos quadrantes
+    private int centerx1, centerx2, centery1, centery2;
 
     Region squareR  = null;
     Region circleR  = null;
     Region triangleR  = null;
     Region rectangleR  = null;
 
-    int pontos = 0;
+    int points = 0;
     int count=0;
 
-
     public DoodleView(Context context, AttributeSet attrs) {
-        super(context, attrs); // pass context to View's constructor
+        super(context, attrs);
 
-        //paintScreen = new Paint(); // used to display bitmap onto screen
-
-
-        // set the initial display settings for the painted line
         paintLine = new Paint();
-        paintLine.setAntiAlias(true); // smooth edges of drawn line
-        paintLine.setColor(Color.BLACK); // default color is black
-        paintLine.setStyle(Paint.Style.STROKE); // solid line
-        paintLine.setStrokeWidth(30); // set the default line width
-        paintLine.setStrokeCap(Paint.Cap.ROUND); // rounded line ends
+        paintLine.setAntiAlias(true);
+        paintLine.setColor(Color.BLACK);
+        paintLine.setStyle(Paint.Style.STROKE);
+        paintLine.setStrokeWidth(30);
+        paintLine.setStrokeCap(Paint.Cap.ROUND);
     }
 
     public LinkedHashSet QuadrantRandom(){
@@ -106,54 +90,14 @@ public class DoodleView extends View {
         centery2 = (totalHeight/3)*2;
     }
 
-
-    @Override
-    protected void onAnimationStart() {
-        super.onAnimationStart();
-        ShapeRandom();
-    }
-
-    // creates Bitmap and Canvas based on View's size
-    @Override
-    public void onSizeChanged(int w, int h, int oldW, int oldH) {
-//        bitmap = Bitmap.createBitmap(getWidth(), getHeight(),
-//                Bitmap.Config.ARGB_8888);
-//        bitmapCanvas = new Canvas(bitmap);
-//        bitmap.eraseColor(Color.WHITE); // erase the Bitmap with white
-    }
-
-    // set the painted line's color
-    public void setDrawingColor(int color) {
-        paintLine.setColor(color);
-    }
-
-    // return the painted line's color
-    public int getDrawingColor() {
-        return paintLine.getColor();
-    }
-
-    // set the painted line's width
-    public void setLineWidth(int width) {
-        paintLine.setStrokeWidth(width);
-    }
-
-    // return the painted line's width
-    public int getLineWidth() {
-        return (int) paintLine.getStrokeWidth();
-    }
-
-    // perform custom drawing when the DoodleView is refreshed on screen
     @Override
     protected void onDraw(Canvas canvas) {
-        // draw the background screen
 
         Dimensions();
 
-
-
         if (count == 0)         {
             shape = ShapeRandom();
-            Toast.makeText(getContext(), "Shape: " + shape + ".   " + pontos + " points.  " + count + " times.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Shape: " + shape + ".   " + points + " points.  " + count + " times.", Toast.LENGTH_SHORT).show();
             count++;
             Toast.makeText(getContext(),"Stating " + count + " time.", Toast.LENGTH_SHORT).show();
             Toast.makeText(getContext(), "Click on the " + shape, Toast.LENGTH_SHORT).show();
@@ -164,21 +108,17 @@ public class DoodleView extends View {
             Toast.makeText(getContext(), "Try " + count + " time.", Toast.LENGTH_SHORT).show();
         }
 
-
         HashSet quadrantSet;
         HashSet circle;
         HashSet triangle;
 
-        //circle coordinates
         int cx=0, cy=0, radius=0;
 
-        //triangle coordinates
         Point vh = null;
         Point vb1 = null;
         Point vb2 = null;
         Path path = new Path();
 
-        //Quadrants list in random order
         quadrantSet = QuadrantRandom();
         Iterator i = quadrantSet.iterator();
 
@@ -216,107 +156,65 @@ public class DoodleView extends View {
         }
     }
 
-    // handle touch event
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getActionMasked(); // event type
-        int actionIndex = event.getActionIndex(); // pointer (i.e., finger)
+        int action = event.getActionMasked();
+        int actionIndex = event.getActionIndex();
 
-        // determine whether touch started, ended or is moving
+
         if (action == MotionEvent.ACTION_DOWN) {
-            touchStarted(event.getX(actionIndex), event.getY(actionIndex),
-                    event.getPointerId(actionIndex));
+            touchStarted(event.getX(actionIndex), event.getY(actionIndex));
         }
-//        else if (action == MotionEvent.ACTION_UP ||
-//                action == MotionEvent.ACTION_POINTER_UP) {
-//            touchEnded(event.getPointerId(actionIndex));
-//        }
-//        else {
-//            touchMoved(event);
-//        }
-
-        // redraw
-
         return true;
     }
 
-    // called when the user touches the screen
-    private void touchStarted(float x, float y, int lineID) {
+
+    private void touchStarted(float x, float y) {
 
         Point point = new Point();
-
         point.set((int)x, (int)y);
 
         if (squareR.contains((int)x, (int)y))
         {
             Toast.makeText(getContext(), "You touched the square", Toast.LENGTH_SHORT).show();
-            if (shape.equals("square"))
-            {
-                pontos++;
-                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            if (shape.equals("square"))            {
+                points++;
+                Toast.makeText(getContext(), "You won " + points + " points", Toast.LENGTH_SHORT).show();
             }
         }
 
-        else if (rectangleR.contains((int)x, (int)y))
-
-        {
+        else if (rectangleR.contains((int)x, (int)y))   {
             Toast.makeText(getContext(), "You touched the rectangle", Toast.LENGTH_SHORT).show();
-            if (shape.equals("rectangle"))
-            {
-                pontos++;
-                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            if (shape.equals("rectangle"))            {
+                points++;
+                Toast.makeText(getContext(), "You won " + points + " points", Toast.LENGTH_SHORT).show();
             }
-
         }
 
-        else if (triangleR.contains((int)x, (int)y))
-
-        {
+        else if (triangleR.contains((int)x, (int)y))    {
             Toast.makeText(getContext(), "You touched the triangle", Toast.LENGTH_SHORT).show();
-            if (shape.equals("triangle"))
-            {
-                pontos++;
-                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            if (shape.equals("triangle"))            {
+                points++;
+                Toast.makeText(getContext(), "You won " + points + " points", Toast.LENGTH_SHORT).show();
             }
-
         }
 
 
-        else if (circleR.contains((int)x, (int)y))
-        {
+        else if (circleR.contains((int)x, (int)y))      {
             Toast.makeText(getContext(), "You touched the circle", Toast.LENGTH_SHORT).show();
-            if (shape.equals("circle"))
-            {
-                pontos++;
-                Toast.makeText(getContext(), "You won " + pontos + " points", Toast.LENGTH_SHORT).show();
+            if (shape.equals("circle"))            {
+                points++;
+                Toast.makeText(getContext(), "You won " + points + " points", Toast.LENGTH_SHORT).show();
             }
         }
 
-        if (count%4==0)
-        {
-            Toast.makeText(getContext(), "END OF GAME: YOU WON " + pontos + " POINTS. RESTART PLAYING...", Toast.LENGTH_LONG).show();
+        if (count%4==0)        {
+            Toast.makeText(getContext(), "END OF GAME: YOU WON " + points + " POINTS. RESTART PLAYING...", Toast.LENGTH_LONG).show();
             count = 0;
-            pontos = 0;
+            points = 0;
         }
-
         invalidate();
-
-
     }
-
-    // called when the user drags along the screen
-    private void touchMoved(MotionEvent event) {
-
-    }
-
-    // called when the user finishes a touch
-    private void touchEnded(int lineID) {
-
-
-
-    }
-
-
 
     public Rect Square(int quadrant) {
 
@@ -428,7 +326,6 @@ public class DoodleView extends View {
         return (totalWidth/2 - totalWidth/8);
     }
 
-
     public LinkedHashSet Triangule(int quadrant) {
 
         LinkedHashSet triangule = new LinkedHashSet();
@@ -489,7 +386,6 @@ public class DoodleView extends View {
 
         LinkedHashSet lh = new LinkedHashSet();
 
-
         int cx= 0, cy= 0, radius;
 
         radius = calculateCircleRadius();
@@ -525,55 +421,14 @@ public class DoodleView extends View {
         lh.add(radius);
 
         circleR = new Region(cx-radius, cy-radius, cx+radius*2, cy+radius*2);
-
         return lh;
-
-
     }
 
     public int calculateCircleRadius() {
         return (totalWidth/2 - totalWidth/8)/2;
     }
-
 }
-//    public class Shape extends Canvas {
-//
-//        private int quadrant;
-//
-//
-//        public Shape(int quadrant) {
-//            this.quadrant = quadrant;
-//
-//        }
-//    }
-//
-//    public class ShapeSquare extends Shape {
-//
-//        private int side;
-//
-//                public ShapeSquare(int quadrant) {
-//            super(quadrant);
-//
-//            side = calculateSide();
-//
-//        }
-//
-//
-//
-//        private int calculateSide() {
-//
-////            return (totalWidth/2 - totalWidth/12);
-////        }
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    }
+
 
 
 
