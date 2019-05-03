@@ -199,7 +199,6 @@ public class DoodleView extends View {
             }
         }
 
-
         else if (circleR.contains((int)x, (int)y))      {
             Toast.makeText(getContext(), "You touched the circle", Toast.LENGTH_SHORT).show();
             if (shape.equals("circle"))            {
@@ -219,15 +218,11 @@ public class DoodleView extends View {
     public Rect Square(int quadrant) {
 
         Rect square = new Rect();
-
         int left= 0, top= 0, right= 0, bottom = 0, side;
-
         side = calculateSquareSide();
 
         switch (quadrant) {
-
             case 0:
-
                 left = centerx1 - side/2;
                 top = centery1 - side/2;
                 right = left + side;
@@ -235,21 +230,17 @@ public class DoodleView extends View {
                 break;
 
             case 1:
-
                 left = centerx2 - side/2;
                 top = centery1 - side/2;
                 right = left + side;
                 bottom = top + side;
-
                 break;
 
             case 2:
-
                 left = centerx1 - side/2;
                 top = centery2 - side/2;
                 right = left + side;
                 bottom = top + side;
-
                 break;
 
             case 3:
@@ -282,7 +273,6 @@ public class DoodleView extends View {
         switch (quadrant) {
 
             case 0:
-
                 left = centerx1 - side/2;
                 top = centery1 - side/4;
                 right = left + side;
@@ -290,21 +280,17 @@ public class DoodleView extends View {
                 break;
 
             case 1:
-
                 left = centerx2 - side/2;
                 top = centery1 - side/4;
                 right = left + side;
                 bottom = top + side/2;
-
                 break;
 
             case 2:
-
                 left = centerx1 - side/2;
                 top = centery2 - side/4;
                 right = left + side;
                 bottom = top + side/2;
-
                 break;
 
             case 3:
@@ -319,8 +305,8 @@ public class DoodleView extends View {
         rectangleR = new Region(left, top, right, bottom);
 
         return rectangle;
-
     }
+
     private int calculateRectangleSide() {
 
         return (totalWidth/2 - totalWidth/8);
@@ -329,20 +315,17 @@ public class DoodleView extends View {
     public LinkedHashSet Triangule(int quadrant) {
 
         LinkedHashSet triangule = new LinkedHashSet();
-
         Point vb1 = null;
         Point vb2 = null;
         Point vh = null;
         Point extra1 = null;
 
         int height;
-
         height = calculateSquareSide();
 
         switch (quadrant) {
 
             case 0:
-
                 vh = new Point(centerx1, centery1-height/2);
                 vb1 = new Point(centerx1-height/4, centery1+height/2);
                 vb2 = new Point(centerx1+height/4, centery1+height/2);
@@ -350,7 +333,6 @@ public class DoodleView extends View {
                 break;
 
             case 1:
-
                 vh = new Point(centerx2, centery1-height/2);
                 vb1 = new Point(centerx2-height/4, centery1+height/2);
                 vb2 = new Point(centerx2+height/4, centery1+height/2);
@@ -358,7 +340,6 @@ public class DoodleView extends View {
                 break;
 
             case 2:
-
                 vh = new Point(centerx1, centery2-height/2);
                 vb1 = new Point(centerx1-height/4, centery2+height/2);
                 vb2 = new Point(centerx1+height/4, centery2+height/2);
@@ -393,19 +374,16 @@ public class DoodleView extends View {
         switch (quadrant) {
 
             case 0:
-
                 cx = centerx1;
                 cy = centery1;
                 break;
 
             case 1:
-
                 cx = centerx2;
                 cy = centery1;
                 break;
 
             case 2:
-
                 cx = centerx1;
                 cy = centery2;
                 break;
@@ -428,8 +406,3 @@ public class DoodleView extends View {
         return (totalWidth/2 - totalWidth/8)/2;
     }
 }
-
-
-
-
-
